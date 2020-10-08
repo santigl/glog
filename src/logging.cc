@@ -510,6 +510,7 @@ class LogDestination {
   static void SetStderrLogging(LogSeverity min_severity);
   static void SetEmailLogging(LogSeverity min_severity, const char* addresses);
   static void LogToStderr();
+  static void SetLogPrefix(bool enabled);
   // Flush all log files that are at least at the given severity level
   static void FlushLogFiles(int min_severity);
   static void FlushLogFilesUnsafe(int min_severity);
@@ -712,6 +713,13 @@ inline void LogDestination::LogToStderr() {
   for ( int i = 0; i < NUM_SEVERITIES; ++i ) {
     SetLogDestination(i, "");     // "" turns off logging to a logfile
   }
+}
+
+inline void LogDestination::SetLogPrefix(bool enabled) {
+  // Prevent any subtle race conditions by wrapping a mutex lock around
+  // all this stuff.
+  MutexLock l(&log_mutex);
+  FLAGS_log_prefix = enabled;
 }
 
 inline void LogDestination::SetEmailLogging(LogSeverity min_severity,
@@ -2030,6 +2038,10 @@ void SetEmailLogging(LogSeverity min_severity, const char* addresses) {
 
 void LogToStderr() {
   LogDestination::LogToStderr();
+}
+
+void SetLogPrefix(bool enabled) {
+  LogDestination::SetLogPrefix(enabled);
 }
 
 namespace base {

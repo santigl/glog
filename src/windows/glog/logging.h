@@ -1507,6 +1507,11 @@ GOOGLE_GLOG_DLL_DECL void SetStderrLogging(LogSeverity min_severity);
 GOOGLE_GLOG_DLL_DECL void LogToStderr();
 
 //
+// Set whether the log prefix should be prepended to each line of output.
+//
+GOOGLE_GLOG_DLL_DECL void SetLogPrefix(bool enabled);
+
+//
 // Make it so that all log messages of at least a particular severity are
 // logged via email to a list of addresses (in addition to logging to the
 // usual log file(s)).  The list of addresses is just a string containing

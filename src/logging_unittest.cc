@@ -115,6 +115,7 @@ static void TestWrapper();
 static void TestErrno();
 static void TestTruncate();
 static void TestCustomLoggerDeletionOnShutdown();
+static void TestLogPrefixSetter();
 
 static int x = -1;
 static void BM_Check1(int n) {
@@ -227,6 +228,8 @@ int main(int argc, char **argv) {
   TestCHECK();
   TestDCHECK();
   TestSTREQ();
+
+  TestLogPrefixSetter();
 
   // TODO: The golden test portion of this test is very flakey.
   EXPECT_TRUE(
@@ -606,6 +609,16 @@ void TestSTREQ() {
   CHECK_STREQ((string("a")+"b").c_str(), "ab");
   CHECK_STREQ(string("test").c_str(),
               (string("te") + string("st")).c_str());
+}
+
+void TestLogPrefixSetter() {
+  FlagSaver saver;
+
+  SetLogPrefix(false);
+  CHECK_EQ(FLAGS_log_prefix, false);
+
+  SetLogPrefix(true);
+  CHECK_EQ(FLAGS_log_prefix, true);
 }
 
 TEST(DeathSTREQ, logging) {
